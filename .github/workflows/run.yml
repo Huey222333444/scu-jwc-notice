@@ -1,0 +1,25 @@
+name: 川大教务处公告周报
+on:
+  schedule:
+    # UTC时间0点 = 北京时间早上8点，每周一执行
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # 支持手动点击按钮立即测试
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+      - name: Run script
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PWD: ${{ secrets.SMTP_PWD }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        run: python scu_notice.py
